@@ -1,15 +1,12 @@
-
 import os
 import json
 import psycopg2
 from datetime import datetime, timedelta
 from datetime import datetime, timezone
-from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, To, Content
 
 # Load environment variables from .env file for local development
-load_dotenv()
 
 # Environment variables
 api_key = os.environ.get('SENDGRID_API_KEY')
@@ -58,7 +55,7 @@ def insert_into_sql(data):
     # ... [Your existing insert_into_sql function code] ...
 
 # Function to fetch emails with status not 'delivered' and under the send attempt limit
-def fetch_emails_with_status_not_delivered(max_attempts=3):
+def fetch_emails_with_status_not_delivered(max_attempts=1):
     emails_to_resend = []
     with psycopg2.connect(DATABASE_URL, sslmode='require') as conn:
         cursor = conn.cursor()
@@ -82,7 +79,7 @@ def send_email(sendgrid_api_key, from_email, to_email, subject, content):
     response = sg.client.mail.send.post(request_body=mail.get())
 
     print(f"Response status code: {response.status_code}")
-    print(f"Response body: {response.headers}")
+    # print(f"Response body: {response.headers}")
     
     new_message_id = response.headers.get('X-Message-Id')
     print(f"New Message ID: {new_message_id}")
