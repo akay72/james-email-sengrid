@@ -2,12 +2,12 @@ import os
 import json
 import psycopg2
 from datetime import datetime, timedelta
-from dotenv import load_dotenv
+
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, To, Content
 
 # Load environment variables from .env file for local development
-load_dotenv()
+
 
 # Environment variables
 api_key = os.environ.get('SENDGRID_API_KEY')
