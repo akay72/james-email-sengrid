@@ -63,9 +63,7 @@ def fetch_emails_with_status_delivered():
                         FROM email_data 
                         WHERE status <> 'delivered' 
                         AND send_email_again = FALSE
-                        AND to_email NOT IN (
-                            SELECT to_email FROM email_data WHERE send_email_again = TRUE
-                        )"""
+                        """
         cursor.execute(select_query)
         for row in cursor.fetchall():
             emails_to_resend.append(dict(zip(['msg_id', 'from_email', 'to_email'], row)))
@@ -113,7 +111,7 @@ try:
         delivered_emails = fetch_emails_with_status_delivered()
         for email_info in delivered_emails:
             from_email = email_info['from_email']
-            to_email = email_info['to_email']
+            to_email = 'Anderson@moahco.com'
             original_msg_id = email_info['msg_id']  # Accessing msg_id correctly
             
             # Your email subject and content
