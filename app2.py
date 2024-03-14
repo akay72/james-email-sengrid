@@ -19,8 +19,8 @@ sg = SendGridAPIClient(api_key)
 current_time = datetime.now(timezone.utc)
 start_date = current_time - timedelta(minutes=30)
 end_date = current_time
-start_date_str = start_date.strftime('%Y-%m-%dT%H:%M:%S%z')
-end_date_str = end_date.strftime('%Y-%m-%dT%H:%M:%S%z')
+start_date_str = start_date.strftime('%Y-%m-%dT%H:%M:%S.000Z')
+end_date_str = end_date.strftime('%Y-%m-%dT%H:%M:%S.000Z')
 params = {
     'query': f'last_event_time BETWEEN TIMESTAMP "{start_date_str}" AND TIMESTAMP "{end_date_str}"',
     'limit': 200
