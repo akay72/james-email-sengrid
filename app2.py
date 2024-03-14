@@ -48,7 +48,7 @@ def insert_into_sql(data):
                     message.get("status"), 
                     message.get("opens_count"), 
                     message.get("clicks_count"), 
-                    datetime.strptime(message.get("last_event_time"), '%Y-%m-%dT%H:%M:%S.000Z')
+                    datetime.strptime(message.get("last_event_time"), '%Y-%m-%dT%H:%M:%SZ')
                 ))
                 print(f"Inserted: msg_id {message.get('msg_id')}")
         conn.commit()
