@@ -55,7 +55,7 @@ def insert_into_sql(data):
     # ... [Your existing insert_into_sql function code] ...
 
 # Function to fetch emails with status not 'delivered' and under the send attempt limit
-def fetch_emails_with_status_not_delivered(max_attempts=1):
+def fetch_emails_with_status_not_delivered(max_attempts=2):
     emails_to_resend = []
     with psycopg2.connect(DATABASE_URL, sslmode='require') as conn:
         cursor = conn.cursor()
@@ -86,7 +86,7 @@ def send_email(sendgrid_api_key, from_email, to_email, subject, content):
     
     return new_message_id
 
-def update_database_with_new_message_id(original_msg_id, new_message_id=None, max_attempts=3):
+def update_database_with_new_message_id(original_msg_id, new_message_id=None, max_attempts=2):
     with psycopg2.connect(DATABASE_URL, sslmode='require') as conn:
         cursor = conn.cursor()
         if new_message_id:
