@@ -1,7 +1,7 @@
 import os
 import json
 import psycopg2
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, To, Content
@@ -17,7 +17,7 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 sg = SendGridAPIClient(api_key)
 
 # Define your query parameters here, including the date range
-current_time = datetime.utcnow()
+current_time = datetime.now(timezone.utc)
 start_date = current_time - timedelta(minutes=30)
 end_date = current_time
 start_date_str = start_date.strftime('%Y-%m-%dT%H:%M:%S.000Z')
@@ -59,7 +59,13 @@ def fetch_emails_with_status_delivered():
     emails_to_resend = []
     with psycopg2.connect(DATABASE_URL, sslmode='require') as conn:
         cursor = conn.cursor()
-        select_query = "SELECT msg_id, from_email, to_email FROM email_data WHERE status <> 'delivered' AND send_email_again = FALSE"
+        select_query = """SELECT msg_id, from_email, to_email 
+                        FROM email_data 
+                        WHERE status <> 'delivered' 
+                        AND send_email_again = FALSE
+                        AND to_email NOT IN (
+                            SELECT to_email FROM email_data WHERE send_email_again = TRUE
+                        )"""
         cursor.execute(select_query)
         for row in cursor.fetchall():
             emails_to_resend.append(dict(zip(['msg_id', 'from_email', 'to_email'], row)))
