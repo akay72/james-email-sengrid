@@ -111,7 +111,7 @@ try:
         delivered_emails = fetch_emails_with_status_delivered()
         for email_info in delivered_emails:
             from_email = email_info['from_email']
-            to_email = 'akshaykalra444@gmail.com'
+            to_email = 'Anderson@moahco.com'
             original_msg_id = email_info['msg_id']  # Accessing msg_id correctly
             
             # Your email subject and content
