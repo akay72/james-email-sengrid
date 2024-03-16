@@ -1,2 +1,4 @@
 unixodbc
 unixodbc-dev
+libssl1.0.0
+libssl-dev
