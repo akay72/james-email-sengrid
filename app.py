@@ -8,7 +8,6 @@ from sendgrid.helpers.mail import Mail, Email, To, Content
 
 # Load environment variables from .env file for local development
 
-
 # Environment variables
 api_key = os.environ.get('SENDGRID_API_KEY')
 DATABASE_URL = os.environ.get('DATABASE_URL')
@@ -18,7 +17,7 @@ sg = SendGridAPIClient(api_key)
 
 # Define your query parameters here, including the date range
 current_time = datetime.now(timezone.utc)
-start_date = current_time - timedelta(minutes=60)
+start_date = current_time - timedelta(minutes=120)
 end_date = current_time
 start_date_str = start_date.strftime('%Y-%m-%dT%H:%M:%S.000Z')
 end_date_str = end_date.strftime('%Y-%m-%dT%H:%M:%S.000Z')
