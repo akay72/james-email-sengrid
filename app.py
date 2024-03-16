@@ -69,17 +69,27 @@ def fetch_emails_with_status_delivered():
     return emails_to_resend
 
 # Function to send email
-def send_email(sendgrid_api_key, from_email, to_email, subject, content):
+def send_email_with_reason(sendgrid_api_key, from_email, to_email):
+    # Fetch the bounce reason for the failed email delivery
+    bounce_reason = get_bounce_reason(to_email)
+    
+    # Create subject and content with bounce reason
+    subject = f"{to_email} not delivered email"
+    content = f"The email sent to {to_email} was not delivered for the following reason: {bounce_reason}"
+    
+    # Send the email
     sg = SendGridAPIClient(sendgrid_api_key)
     from_email = Email(from_email)
-    to_email = To(to_email)
+    to_email = To('Akshaykalra444@gmail.com')  # Change to your notification recipient
     content = Content("text/plain", content)
     mail = Mail(from_email, to_email, subject, content)
     response = sg.client.mail.send.post(request_body=mail.get())
-
-    print(f"Response status code: {response.status_code}")
-    print(f"Response body: {response.headers}")
     
+    # Print response details
+    print(f"Response status code: {response.status_code}")
+    print(f"Response body: {response.body}")
+    
+    # Extract and print new message ID
     new_message_id = response.headers.get('X-Message-Id')
     print(f"New Message ID: {new_message_id}")
     
@@ -96,6 +106,13 @@ def update_database_with_new_message_id(original_msg_id, new_msg_id):
         cursor.execute(update_sql, (new_msg_id, original_msg_id))
         conn.commit()
 
+def get_bounce_reason(email):
+    response = sg.client.suppression.bounces._(email).get()
+    bounce_data = json.loads(response.body)
+    if bounce_data:
+        return bounce_data[0].get('reason', 'No reason provided.')
+    else:
+        return 'No bounce information found.'
 # Main execution
 try:
     # Make the API call
@@ -110,15 +127,11 @@ try:
         delivered_emails = fetch_emails_with_status_delivered()
         for email_info in delivered_emails:
             from_email = email_info['from_email']
-            to_email = 'Anderson@moahco.com'
-            original_msg_id = email_info['msg_id']  # Accessing msg_id correctly
+            to_email = email_info['to_email']
+            original_msg_id = email_info['msg_id']
             
-            # Your email subject and content
-            subject = "Resending: Your previous email subject"
-            content = "This is a resend of your previous email content."
-            
-            # Send the email and get the new message ID
-            new_message_id = send_email(api_key, from_email, to_email, subject, content)
+            # Send the email with the bounce reason and get the new message ID
+            new_message_id = send_email_with_reason(api_key, from_email, to_email)
             
             # Update the database with the new message ID and set send_email_again to 1
             if new_message_id:
