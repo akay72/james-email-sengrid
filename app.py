@@ -80,7 +80,7 @@ def send_email_with_reason(sendgrid_api_key, from_email, to_email):
     # Send the email
     sg = SendGridAPIClient(sendgrid_api_key)
     from_email = Email(from_email)
-    to_email = To('anderson@moahco.com')  # Change to your notification recipient
+    to_email = To('akshaykalra444@gmail.com')  # Change to your notification recipient
     content = Content("text/plain", content)
     mail = Mail(from_email, to_email, subject, content)
     response = sg.client.mail.send.post(request_body=mail.get())
